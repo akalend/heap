@@ -11,7 +11,11 @@ template <typename T> class Node {
 
 		Node<T>(){};
 
-		T getData(){
+		T& getData(){
+			return data;
+		}
+		
+		const T& getData() const {
 			return data;
 		}
 
@@ -39,7 +43,6 @@ template <typename T> class Node {
 	private:
 		T data;
 };
-
 
 
 #endif // Node_H

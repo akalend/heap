@@ -1,12 +1,14 @@
-
 #include <cstdio>
 #include <cmath>
 #include <iterator>
 #include <memory>
 #include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <type_traits>
 
-#include "node.h"
 #include "heapiterator.h"
+
 
 #define LCHILD(x) 2 * x + 1
 #define RCHILD(x) 2 * x + 2
@@ -22,9 +24,17 @@ template <typename T> class Heap {
 			elem = new Node<T>[size]();
 		}
 
-		Heap(const int size ) {
-			this->size = size;
+		Heap(const int size ) : size(size) {
+			// this->size = size;
 			elem = new Node<T>[size]();
+		}
+
+
+		Heap(const Heap<T>  &hp) : size( hp.size ) {
+			elem = new Node<T>[size]();
+			for(int i=0; i < size; i++) {
+				elem[i] = hp.elem[i];
+			}			
 		}
 
 
@@ -38,22 +48,24 @@ template <typename T> class Heap {
 		}
 
     typedef HeapIterator<T> iterator;
-    typedef HeapIterator<const T> const_iterator;
+    typedef HeapIterator<T, true> const_iterator;
+
+    
 
     iterator begin() {
-	    return iterator( elem[0] );
+	    return iterator( elem );
     }
 
     iterator end() {
-    	return iterator( elem[size] );
+    	return iterator( elem + size );
     }
 
-    const_iterator begin() const {
-	    return const_iterator( elem[0] );
+    const_iterator cbegin() const {
+	    return const_iterator( elem );
     }
 
-    const_iterator end() const {
-    	return const_iterator( elem[size] );
+    const_iterator cend() const {
+    	return const_iterator( elem + size );
     }
 
 
@@ -85,7 +97,6 @@ Heap_Increase_Key(A, i, key)
 
 /*
 		    всставка узла
-
 	Heap_Insert(A, key)
   	A.heap_size ← A.heap_size+1
   	A[A.heap_size] ← -∞
@@ -126,7 +137,6 @@ Heap_Increase_Key(A, i, key)
 
 /*
 		    удавление узла
-
 		    Heap_Extract_Max(A)
 		  if A.heap_size[A] < 1
 		    then error "Куча пуста"
@@ -141,9 +151,6 @@ Heap_Increase_Key(A, i, key)
 		        printf("\nHeap is empty!\n");
 		        return -1;
 		    }
-
-	    	levelorderTraversal();
-	        printf("\nDeleting node %d\n\n", elem[0].getData());
 		
 			T result = elem[0].getData();
 			Node<T> minNode(-9999);
@@ -277,44 +284,3 @@ Heapify(A, i)
 	} 
 }; 
 
-
-
-int main() {
-
-// printf(  "dept %d\n",  (int)floor(log2(9.0))  );
-
-
-	Heap<int> hp;
-
-	hp.push_back(6);
-	hp.push_back(9);
-	hp.push_back(8);
-
-	hp.push_back(10);
-	hp.push_back(3);
-	hp.push_back(4);
-	hp.push_back(1);
-	hp.push_back(5);
-	hp.push_back(16);
-	hp.push_back(11);
-	hp.push_back(5);
-
-
-	// Heap<int>::iterator it  = hp.begin();
-
-	// for (Heap::iterator<int> it = hp.begin(); it != hp.end(); ++it ) {
-	// 	//printf( *it );
-	// }
-
-
-	hp.levelorderTraversal();
-
-	// int pop =  hp.pop();
-
-	// hp.levelorderTraversal();
-
-	printf("Ok\n");
-
-
-	return 0;
-}

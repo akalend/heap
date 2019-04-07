@@ -6,58 +6,36 @@
 
 #include "node.h"
 
-class OwnContainer;
+template <typename T> class Heap;
 
-template<typename T>
+template<typename T, bool is_const_iterator = false>
 class HeapIterator: public std::iterator<std::input_iterator_tag, T>
 {
-    friend class Heap;
-private:
-    HeapIterator(T* p);
-public:
-    HeapIterator(const HeapIterator &it);
+    using data_ptr_t = Node<T>*;    
+    using reference_t = std::conditional_t<is_const_iterator, typename std::add_const_t<T>, T&>;
+    
+    data_ptr_t p;
+    
+    friend class Heap<T>;
 
-    bool operator!=(HeapIterator const& other) const;
-    bool operator==(HeapIterator const& other) const; //need for BOOST_FOREACH
-    typename HeapIterator::reference operator*() const;
-    HeapIterator& operator++();
-private:
-    // T* p;
-    Node<T>* p;
+    HeapIterator(data_ptr_t ptr) : p(ptr) {}
+
+public:
+    HeapIterator(const HeapIterator &it) : p( it.p ){}
+
+
+    bool operator!=(HeapIterator const& other) const { return p != other.p; }
+    bool operator==(HeapIterator const& other) const { return p == other.p; }
+    reference_t operator*() const { return p->getData(); }
+    HeapIterator& operator++() {++p; return *this;}
+
+    // const T& operator=(const T& rv) const {
+ //         rv.push_back( p->getData() );
+ //         return this;
+ //    }
+
 };
 
-template<typename T>
-HeapIterator< Node<T> >::HeapIterator( Node<T> *p) : p(p)
-{ }
 
-
-// template<typename T>
-// HeapIterator<T>::HeapIterator(const HeapIterator& it) :p(it.p)
-// { }
-
-// template<typename T>
-// bool HeapIterator<T>::operator!=(HeapIterator const& other) const
-// {
-//     return p != other.p;
-// }
-
-// template<typename T>
-// bool HeapIterator<T>::operator==(HeapIterator const& other) const
-// {
-//     return p == other.p;
-// }
-
-// template<typename T>
-// typename HeapIterator<T>::reference HeapIterator<T>::operator*() const
-// {
-//     return *p;
-// }
-
-// template<typename T>
-// HeapIterator<T> &HeapIterator<T>::operator++()
-// {
-//     ++p;
-//     return *this;
-// }
 
 #endif // HeapIterator_H
